@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        #response {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hello API</h1>
+    <p>Enter your name:</p>
+    <input type="text" id="visitorName" placeholder="Your name" />
+    <button onclick="fetchGreeting()">Submit</button>
+    <div id="response"></div>
+
+    <script>
+        async function fetchGreeting() {
+            const visitorName = document.getElementById('visitorName').value;
+            const responseElement = document.getElementById('response');
+
+            try {
+                const response = await fetch(`/index.php?visitor_name=${encodeURIComponent(visitorName)}`);
+                const text = await response.text();
+
+                try {
+                    const data = JSON.parse(text);
+                    responseElement.innerHTML = `
+                        <p>Client IP: ${data.client_ip}</p>
+                        <p>Location: ${data.location}</p>
+                        <p>Greeting: ${data.greeting}</p>
+                    `;
+                } catch (jsonError) {
+                    responseElement.innerHTML = `<p>Error: Received non-JSON response</p><p>${text}</p>`;
+                }
+            } catch (error) {
+                responseElement.innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
